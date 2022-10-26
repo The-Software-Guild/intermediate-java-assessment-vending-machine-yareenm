@@ -81,18 +81,19 @@ public class VendingMachineController {
         ArrayList<String> items = view.printAllItems(service.listAllItems());
         int selection = view.getItemSelection();
         Change changeDue = new Change();
+        BigDecimal  updatedBalance = balance;
         String[] itemAsString = items.get(selection).split(",");
         Item currentItem = service.getItem(itemAsString[0]);
 
         try{
-            service.sellItem(balance, currentItem);
+            updatedBalance = service.sellItem(updatedBalance, currentItem);
         }catch(VendingMachineException e){
             view.displayErrorMessage(e.getMessage());
         }
 
         view.purchaseSucceeded();
 
-        HashMap<Coins,Integer> changes = changeDue.getChange(balance);
+        HashMap<Coins,Integer> changes = changeDue.getChange(updatedBalance);
         view.printChanges(changes);
 
         return balance.subtract(currentItem.getCost());
